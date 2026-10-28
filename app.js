@@ -9,8 +9,8 @@
 
 const taskInput = document.getElementById("new-task"); //Add a new task.
 const addButton = document.getElementsByTagName("button")[0]; //first button
-const incompleteTaskHolder = document.getElementById("incompleteTasks"); //ul of #incompleteTasks
-const completedTasksHolder = document.getElementById("completed-tasks"); //completed-tasks
+const todoList = document.getElementById("incompleteTasks"); //ul of #incompleteTasks
+const completedList = document.getElementById("completed-tasks"); //completed-tasks
 
 //New task list item
 const createNewTaskElement = function (taskString) {
@@ -58,8 +58,8 @@ const addTask = function () {
   if (!taskInput.value) return;
   const listItem = createNewTaskElement(taskInput.value);
 
-  //Append listItem to incompleteTaskHolder
-  incompleteTaskHolder.appendChild(listItem);
+  //Append listItem to todoList
+  todoList.appendChild(listItem);
   bindTaskEvents(listItem, taskCompleted);
 
   taskInput.value = "";
@@ -72,17 +72,17 @@ const editTask = function () {
 
   const editInput = listItem.querySelector("input[type=text]");
   const label = listItem.querySelector("label");
-  const editBtn = listItem.querySelector(".edit");
-  const containsClass = listItem.classList.contains("editMode");
+  const editButton = listItem.querySelector(".edit");
+  const isEditMode = listItem.classList.contains("editMode");
   //If class of the parent is .editmode
-  if (containsClass) {
+  if (isEditMode) {
     //switch to .editmode
     //label becomes the inputs value.
     label.innerText = editInput.value;
-    editBtn.innerText = "Edit";
+    editButton.innerText = "Edit";
   } else {
     editInput.value = label.innerText;
-    editBtn.innerText = "Save";
+    editButton.innerText = "Save";
   }
 
   //toggle .editmode on the parent.
@@ -92,16 +92,16 @@ const editTask = function () {
 //Delete task.
 const deleteTask = function () {
   const listItem = this.parentNode;
-  const ul = listItem.parentNode;
+  const taskList = listItem.parentNode;
   //Remove the parent list item from the ul.
-  ul.removeChild(listItem);
+  taskList.removeChild(listItem);
 };
 
 //Mark task completed
 const taskCompleted = function () {
   //Append the task list item to the #completed-tasks
   const listItem = this.parentNode;
-  completedTasksHolder.appendChild(listItem);
+  completedList.appendChild(listItem);
   bindTaskEvents(listItem, taskIncomplete);
 };
 
@@ -110,7 +110,7 @@ const taskIncomplete = function () {
   //When the checkbox is unchecked
   //Append the task list item to the #incompleteTasks.
   const listItem = this.parentNode;
-  incompleteTaskHolder.appendChild(listItem);
+  todoList.appendChild(listItem);
   bindTaskEvents(listItem, taskCompleted);
 };
 
@@ -119,7 +119,7 @@ const taskIncomplete = function () {
 //Set the click handler to the addTask function.
 addButton.onclick = addTask;
 
-const bindTaskEvents = function (taskListItem, checkBoxEventHandler) {
+const bindTaskEvents = function (taskListItem, checkboxHandler) {
   //select ListItems children
   const checkBox = taskListItem.querySelector("input[type=checkbox]");
   const editButton = taskListItem.querySelector("button.edit");
@@ -129,18 +129,18 @@ const bindTaskEvents = function (taskListItem, checkBoxEventHandler) {
   editButton.onclick = editTask;
   //Bind deleteTask to delete button.
   deleteButton.onclick = deleteTask;
-  //Bind taskCompleted to checkBoxEventHandler.
-  checkBox.onchange = checkBoxEventHandler;
+  //Bind taskCompleted to checkboxHandler.
+  checkBox.onchange = checkboxHandler;
 };
 
-const bindTaskListEvents = function (taskList, checkBoxEventHandler) {
+const bindTaskListEvents = function (taskList, checkboxHandler) {
   for (const taskListItem of taskList.children) {
-    bindTaskEvents(taskListItem, checkBoxEventHandler);
+    bindTaskEvents(taskListItem, checkboxHandler);
   }
 };
 
-bindTaskListEvents(incompleteTaskHolder, taskCompleted);
-bindTaskListEvents(completedTasksHolder, taskIncomplete);
+bindTaskListEvents(todoList, taskCompleted);
+bindTaskListEvents(completedList, taskIncomplete);
 
 // Issues with usability don't get seen until they are in front of a human tester.
 
